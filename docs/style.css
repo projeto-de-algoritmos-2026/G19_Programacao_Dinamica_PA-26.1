@@ -205,7 +205,36 @@ header p {
     flex-direction: column;
     gap: 4px;
 }
+.window-selector {
+    margin-top: 1.5rem;
+    display: flex;
+    gap: 0.75rem;
+}
+.btn-cap {
+    background: var(--panel-bg);
+    border: 1px solid var(--glass-border);
+    color: var(--text-muted);
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
 
+.btn-cap:hover {
+    border-color: rgba(255, 255, 255, 0.2);
+    color: var(--text-main);
+}
+
+.btn-cap.active {
+    background: rgba(16, 185, 129, 0.15);
+    border-color: var(--dp-color);
+    color: var(--dp-color);
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.1);
+}
 .chunk .id { color: var(--text-muted); }
 .chunk .score { color: #fff; font-weight: 600; }
 .chunk .tokens { color: #3b82f6; }
