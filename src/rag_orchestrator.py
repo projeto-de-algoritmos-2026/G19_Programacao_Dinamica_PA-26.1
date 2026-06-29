@@ -4,6 +4,12 @@ import json
 import random
 import subprocess
 from datetime import datetime
+from flask import Flask, request, jsonify
+from flask_cors import CORS
+
+
+app = Flask(__name__)
+CORS(app)
 
 LIMITE_TOTAL_TOKENS_CONTEXTO  =  4096
 QUANTIDADE_CHUNKS_PARA_MOCK  = 100
@@ -101,79 +107,35 @@ def empacota_via_programacao_dinamica_cpp(lista_chunks_disponiveis, teto_de_toke
     except Exception:
         return None
 
-def consolida_exportacao_json_interface(lista_chunks_disponiveis, resultado_guloso, resultado_dinamico):
-    estrutura_payload = {
-        "timestamp": datetime.now().isoformat(),
-        "max_tokens": LIMITE_TOTAL_TOKENS_CONTEXTO,
-        "raw_chunks": lista_chunks_disponiveis,
-        "greedy_result": resultado_guloso,
-        "knapsack_result": resultado_dinamico
-    }
-    
-    diretorio_raiz_documentacao = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "docs")
-    os.makedirs(diretorio_raiz_documentacao, exist_ok=True)
-    caminho_arquivo_dados = os.path.join(diretorio_raiz_documentacao, "data.json")
-    
-    with open(caminho_arquivo_dados, "w", encoding="utf-8") as arquivo_json:
-        json.dump(estrutura_payload, arquivo_json, indent=4)
+colecao_chunks_vetoriais = gerar_dataset_contexto_vetorial(QUANTIDADE_CHUNKS_PARA_MOCK)
+caminho_binario = aciona_compilador_gpp_nativo()
 
-if __name__ == "__main__":
-    print("Iniciando pipeline de Context Packing...")
-    caminho_binario = aciona_compilador_gpp_nativo()
-    
-    if not caminho_binario:
-        print("[!] Aviso: Compilador g++ nao encontrado no PATH. Motor DP operando em modo Fallback Visual.")
-        resultado_metodo_otimo = None
-    else:
-        print("[*] Motor DP pronto.")
-        
-    colecao_chunks_vetoriais = gerar_dataset_contexto_vetorial(QUANTIDADE_CHUNKS_PARA_MOCK)
-    print(f"[*] Gerados {QUANTIDADE_CHUNKS_PARA_MOCK} fragmentos estocasticos de avaliacao.")
-    
-    resultado_metodo_guloso = empacota_via_metodo_guloso(colecao_chunks_vetoriais, LIMITE_TOTAL_TOKENS_CONTEXTO)
-    print(f"[+] Greedy -> Tokens: {resultado_metodo_guloso['tokens_usados']}, Score: {resultado_metodo_guloso['score_total']}")
+#rota para calculo
+@app.route('/calcular', methods=['GET'])
+def endpoint_calcular():
+    capacidade = request.args.get('capacidade', default=4096, type=int)
+    resultado_guloso = empacota_via_metodo_guloso(colecao_chunks_vetoriais, capacidade)
     
     if caminho_binario:
-        resultado_metodo_otimo = empacota_via_programacao_dinamica_cpp(colecao_chunks_vetoriais, LIMITE_TOTAL_TOKENS_CONTEXTO, caminho_binario)
-        if resultado_metodo_otimo:
-            print(f"[+] DP -> Tokens: {resultado_metodo_otimo['tokens_usados']}, Score: {resultado_metodo_otimo['score_total']}")
-        else:
-            print("[-] Falha na IPC com motor compilado.")
+        resultado_otimo = empacota_via_programacao_dinamica_cpp(colecao_chunks_vetoriais, capacidade, caminho_binario)
     else:
-        resultado_metodo_otimo = {
-            "metodo": "Knapsack DP",
-            "score_total": round(resultado_metodo_guloso['score_total'] * 1.15, 4),
-            "tokens_usados": LIMITE_TOTAL_TOKENS_CONTEXTO - random.randint(0, 100),
-            "selected_ids": resultado_metodo_guloso['selected_ids'][:len(resultado_metodo_guloso['selected_ids'])//2]
+        resultado_otimo = {
+            "metodo": "Knapsack DP (MOCK)",
+            "score_total": round(resultado_guloso['score_total'] * 1.15, 4),
+            "tokens_usados": capacidade - random.randint(0, 50),
+            "selected_ids": resultado_guloso['selected_ids']
         }
-            
-    consolida_exportacao_json_interface(colecao_chunks_vetoriais, resultado_metodo_guloso, resultado_metodo_otimo)
-    print("[*] Exportacao do relatorio concluida.")
     
-    # === INTEGRAÇÃO COM IA REAL (Opcional) ===
-    from dotenv import load_dotenv
-    load_dotenv()
-    chave_api = os.getenv("GEMINI_API_KEY")
+    return jsonify({
+        "max_tokens": capacidade,
+        "raw_chunks": colecao_chunks_vetoriais,
+        "greedy_result": resultado_guloso,
+        "knapsack_result": resultado_otimo
+    })
+
+if __name__ == "__main__":
+    if not caminho_binario:
+        print("[!] Aviso: Compilador g++ nao encontrado. Motor em modo Fallback.")
     
-    if chave_api:
-        from google import genai
-        print("\n[*] Chave do Gemini detectada no .env! Acionando a IA real...")
-        cliente_ia = genai.Client(api_key=chave_api)
-        
-        ids_knapsack = resultado_metodo_otimo['selected_ids']
-        contexto_denso = "A otimização de contexto via Knapsack DP permite reduzir a latência e o custo financeiro da API."
-        
-        prompt_final = f"Baseado no contexto ultradenso selecionado pelo Knapsack DP:\n{contexto_denso}\nCrie uma frase épica celebrando a união de Programação Dinâmica Clássica com a Inteligência Artificial Moderna."
-        
-        try:
-            resposta = cliente_ia.models.generate_content(
-                model='gemini-2.5-flash',
-                contents=prompt_final
-            )
-            print("\n====== RESPOSTA DO GEMINI ======")
-            print(resposta.text)
-            print("================================")
-        except Exception as erro:
-            print(f"[!] Erro ao chamar a API: {erro}")
-    else:
-        print("\n[*] Nenhuma chave do Gemini encontrada no .env. Execucao 100% local/offline finalizada (Ideal para a apresentacao!).")
+    print("Backend na porta 5000")
+    app.run(port=5000, debug=True)
