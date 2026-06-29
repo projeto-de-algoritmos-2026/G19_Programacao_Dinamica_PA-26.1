@@ -149,3 +149,31 @@ if __name__ == "__main__":
             
     consolida_exportacao_json_interface(colecao_chunks_vetoriais, resultado_metodo_guloso, resultado_metodo_otimo)
     print("[*] Exportacao do relatorio concluida.")
+    
+    # === INTEGRAÇÃO COM IA REAL (Opcional) ===
+    from dotenv import load_dotenv
+    load_dotenv()
+    chave_api = os.getenv("GEMINI_API_KEY")
+    
+    if chave_api:
+        from google import genai
+        print("\n[*] Chave do Gemini detectada no .env! Acionando a IA real...")
+        cliente_ia = genai.Client(api_key=chave_api)
+        
+        ids_knapsack = resultado_metodo_otimo['selected_ids']
+        contexto_denso = "A otimização de contexto via Knapsack DP permite reduzir a latência e o custo financeiro da API."
+        
+        prompt_final = f"Baseado no contexto ultradenso selecionado pelo Knapsack DP:\n{contexto_denso}\nCrie uma frase épica celebrando a união de Programação Dinâmica Clássica com a Inteligência Artificial Moderna."
+        
+        try:
+            resposta = cliente_ia.models.generate_content(
+                model='gemini-2.5-flash',
+                contents=prompt_final
+            )
+            print("\n====== RESPOSTA DO GEMINI ======")
+            print(resposta.text)
+            print("================================")
+        except Exception as erro:
+            print(f"[!] Erro ao chamar a API: {erro}")
+    else:
+        print("\n[*] Nenhuma chave do Gemini encontrada no .env. Execucao 100% local/offline finalizada (Ideal para a apresentacao!).")
