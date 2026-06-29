@@ -13,6 +13,14 @@
             <div class="header-content">
                 <h1>RAG Context Packer</h1>
                 <p>Otimizando a Injeção de Prompt em LLMs via <span class="highlight">Programação Dinâmica (Knapsack 0/1)</span></p>
+                
+                <div class="control-panel" style="margin-top: 1.5rem; display: flex; align-items: center; gap: 20px; background: rgba(255,255,255,0.02); padding: 12px 20px; border-radius: 8px; border: 1px solid var(--glass-border); max-width: fit-content;">
+                    <label style="color: var(--text-muted); font-weight: 600; font-size: 0.9rem;">Mochila (Tokens):</label>
+                    
+                    <input type="range" id="tokens-slider" min="500" max="10000" value="4096" step="100" style="width: 200px; cursor: pointer;">
+                    
+                    <input type="number" id="tokens-input" min="500" max="100000" value="4096" style="width: 100px; background: #161b22; border: 1px solid var(--glass-border); color: var(--dp-color); border-radius: 6px; padding: 6px 10px; font-family: var(--font-mono); font-weight: 800; text-align: center;">
+                </div>
             </div>
             <div class="stats-card">
                 <span class="label">Context Window (Budget)</span>
@@ -72,8 +80,16 @@
                 </div>
             </div>
         </main>
+    <hr style="border: 0; border-top: 1px solid var(--glass-border); margin: 4rem 0 2rem 0;">
+
+    <div class="json-inspector-container" style="max-width: 1200px; margin: 0 auto; padding: 0 2rem 3rem 2rem;">
+        <h3 style="color: var(--text-muted); font-size: 1.1rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 8px;">
+            🖥️ Back-end Payload <span style="color: var(--greedy-color); font-size: 0.8rem; font-family: var(--font-mono); background: rgba(245, 158, 11, 0.1); padding: 2px 8px; border-radius: 4px;">LIVE JSON</span>
+        </h3>
+        <pre id="json-preview" style="background: #090b0f; border: 1px solid var(--glass-border); border-radius: 12px; padding: 1.5rem; max-height: 400px; overflow-y: auto; font-family: var(--font-mono); font-size: 0.85rem; color: #a7b5ca; line-height: 1.5; box-shadow: inset 0 0 20px rgba(0,0,0,0.6);"></pre>
     </div>
     
     <script src="app.js"></script>
+    
 </body>
 </html>
