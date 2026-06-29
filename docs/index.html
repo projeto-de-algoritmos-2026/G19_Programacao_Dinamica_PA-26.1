@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAG Context Packer - Knapsack 0/1 DP</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Fira+Code&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="glass-container">
+        <header>
+            <div class="header-content">
+                <h1>RAG Context Packer</h1>
+                <p>Otimizando a Injeção de Prompt em LLMs via <span class="highlight">Programação Dinâmica (Knapsack 0/1)</span></p>
+            </div>
+            <div class="stats-card">
+                <span class="label">Context Window (Budget)</span>
+                <span class="value" id="max-tokens">-- tokens</span>
+            </div>
+        </header>
+
+        <main>
+            <div class="comparison-grid">
+                <!-- Painel Guloso -->
+                <div class="panel">
+                    <h2>Abordagem Gulosa (Greedy)</h2>
+                    <p class="subtitle">Seleciona do maior score para o menor até estourar.</p>
+                    
+                    <div class="metric-group">
+                        <div class="metric">
+                            <span class="metric-label">Relevância Semântica (Lucro)</span>
+                            <span class="metric-value greedy-color" id="greedy-score">0.00</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Tokens Usados</span>
+                            <span class="metric-value" id="greedy-tokens">0</span>
+                        </div>
+                    </div>
+
+                    <div class="progress-container">
+                        <div class="progress-bar greedy-bg" id="greedy-bar" style="width: 0%"></div>
+                    </div>
+                    
+                    <div class="chunks-container" id="greedy-chunks">
+                    </div>
+                </div>
+
+                <!-- Painel Knapsack DP -->
+                <div class="panel premium-panel">
+                    <div class="badge">Matematicamente Ótimo</div>
+                    <h2>Bottom-Up DP (Knapsack)</h2>
+                    <p class="subtitle">Otimização global garantindo a maior densidade de informação.</p>
+                    
+                    <div class="metric-group">
+                        <div class="metric">
+                            <span class="metric-label">Relevância Semântica (Lucro)</span>
+                            <span class="metric-value knapsack-color" id="dp-score">0.00</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Tokens Usados</span>
+                            <span class="metric-value" id="dp-tokens">0</span>
+                        </div>
+                    </div>
+
+                    <div class="progress-container">
+                        <div class="progress-bar knapsack-bg" id="dp-bar" style="width: 0%"></div>
+                    </div>
+                    
+                    <div class="chunks-container" id="dp-chunks">
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script src="app.js"></script>
+</body>
+</html>
