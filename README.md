@@ -30,12 +30,12 @@ Estratégias gananciosas baseadas em ordenação decrescente de scores desperdi�
 
 ## Screenshots
 
-![Erro(backend nao inicializado)](../G19_Programacao_Dinamica_PA-26.1/docs/imagens/erro_site.png)
-![Interface do site](../G19_Programacao_Dinamica_PA-26.1/docs/imagens/site.png)
-![Knapsack - Matriz DP](../G19_Programacao_Dinamica_PA-26.1/docs/imagens/matriz_dp.png)
-![knapsack - find solution](../G19_Programacao_Dinamica_PA-26.1/docs/imagens/traceback.png)
-![terminal - Mock](../G19_Programacao_Dinamica_PA-26.1/docs/imagens/terminal_mock.png)
-![terminal - Gemini](../G19_Programacao_Dinamica_PA-26.1/docs/imagens/terminal_gemini.png)
+![Erro(backend nao inicializado)](docs/assets/erro_site.png)
+![Interface do site](docs/assets/site.png)
+![Knapsack - Matriz DP](docs/assets/matriz_dp.png)
+![knapsack - find solution](docs/assets/traceback.png)
+![terminal - Mock](docs/assets/terminal_mock.png)
+![terminal - Gemini](docs/assets/terminal_gemini.png)
 
 ## Instalação
 
