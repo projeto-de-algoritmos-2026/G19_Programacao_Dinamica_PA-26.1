@@ -1,6 +1,7 @@
 import os
 import sys
 import json
+import time
 import random
 import subprocess
 import numpy as np
@@ -30,7 +31,7 @@ SCORE_MINIMO_NUGGET = 0.90
 SCORE_MAXIMO_NUGGET = 0.99
 
 CAMINHO_BASE_CONHECIMENTO = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "knowledge_base.txt")
-PERGUNTA_USUARIO  =  "O que é Programação Dinâmica e como ela se aplica ao problema do Context Packing em RAG?"
+PERGUNTA_USUARIO  =  "Quem é Capitu e por que Bentinho desconfiava dela?"
 
 
 def aciona_compilador_gpp_nativo():
@@ -73,16 +74,29 @@ def extrai_chunks_da_base_de_conhecimento(chave_api):
         conteudo_bruto = arquivo.read()
 
     paragrafos_brutos = [p.strip() for p in conteudo_bruto.split("\n\n") if len(p.strip()) > 30]
+    paragrafos_brutos = paragrafos_brutos[:200]
 
     cliente_embeddings = genai.Client(api_key=chave_api)
-    textos_para_embedar = [PERGUNTA_USUARIO] + paragrafos_brutos
-    resposta_embeddings = cliente_embeddings.models.embed_content(
-        model="gemini-embedding-001",
-        contents=textos_para_embedar
-    )
 
-    vetor_pergunta  =  resposta_embeddings.embeddings[0].values
-    vetores_paragrafos = [emb.values for emb in resposta_embeddings.embeddings[1:]]
+    resposta_pergunta = cliente_embeddings.models.embed_content(
+        model="gemini-embedding-001",
+        contents=PERGUNTA_USUARIO
+    )
+    vetor_pergunta = resposta_pergunta.embeddings[0].values
+
+    vetores_paragrafos = []
+    tamanho_lote = 90
+    lotes = [paragrafos_brutos[i:i + tamanho_lote] for i in range(0, len(paragrafos_brutos), tamanho_lote)]
+
+    for idx, lote in enumerate(lotes):
+        resposta_lote = cliente_embeddings.models.embed_content(
+            model="gemini-embedding-001",
+            contents=lote
+        )
+        vetores_paragrafos.extend([emb.values for emb in resposta_lote.embeddings])
+        if idx < len(lotes) - 1:
+            print(f"[*] Lote {idx + 1}/{len(lotes)} processado. Aguardando cota da API...")
+            time.sleep(62)
 
     colecao_chunks_reais = []
     for indice, (paragrafo, vetor) in enumerate(zip(paragrafos_brutos, vetores_paragrafos)):
