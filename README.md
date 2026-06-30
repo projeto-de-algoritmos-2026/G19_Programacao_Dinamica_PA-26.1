@@ -30,11 +30,29 @@ Estratégias gananciosas baseadas em ordenação decrescente de scores desperdi�
 
 ## Screenshots
 
+### Interface Web
+
+#### Backend não inicializado
 ![Erro(backend nao inicializado)](docs/assets/erro_site.png)
+
+#### Interface integrada com Gemini
 ![Interface do site](docs/assets/site.png)
+
+### Algoritmo
+
+### Matriz do knapsack DP 
+
 ![Knapsack - Matriz DP](docs/assets/matriz_dp.png)
+
+### Find Solution do knapsack
 ![knapsack - find solution](docs/assets/traceback.png)
+
+### Terminal
+
+#### Mock
 ![terminal - Mock](docs/assets/terminal_mock.png)
+
+#### Integração com API
 ![terminal - Gemini](docs/assets/terminal_gemini.png)
 
 ## Instalação
