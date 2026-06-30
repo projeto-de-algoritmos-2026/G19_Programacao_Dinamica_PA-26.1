@@ -238,3 +238,17 @@ header p {
 .chunk .id { color: var(--text-muted); }
 .chunk .score { color: #fff; font-weight: 600; }
 .chunk .tokens { color: #3b82f6; }
+
+.connection-warning {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #fca5a5;
+    padding: 12px 20px;
+    border-radius: 8px;
+    margin-top: 20px;
+    margin-bottom: 30px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-align: center;
+    backdrop-filter: blur(10px);
+}

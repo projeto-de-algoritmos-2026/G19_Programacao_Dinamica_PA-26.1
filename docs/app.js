@@ -47,8 +47,10 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById("dp-bar").style.width = `${(dp.tokens_usados / payload_dados.max_tokens) * 100}%`;
             renderChunks(dp.selected_ids, payload_dados.raw_chunks, "dp-chunks");
 
+            document.getElementById("connection-warning").style.display = "none";
         } catch (error) {
             console.error("[ERRO] Certifique-se de que o servidor Flask está rodando:", error);
+            document.getElementById("connection-warning").style.display = "block";
         }
     }
 
